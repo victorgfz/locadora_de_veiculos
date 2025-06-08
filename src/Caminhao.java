@@ -1,7 +1,7 @@
 public class Caminhao extends Veiculo {
 
-    public Caminhao(String placa, String modelo, int valorDiaria) {
-        super(placa, modelo, valorDiaria);
+    public Caminhao(String placa, String modelo, int valorDiaria, int id) {
+        super(placa, modelo, valorDiaria, id);
     }
 
     public String getTipo() {

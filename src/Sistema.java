@@ -1,11 +1,14 @@
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Scanner;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 
 public class Sistema {
-    Scanner scanner = new Scanner(System.in);
     private ArrayList<Usuario> usuarios = new ArrayList<>();
+
+    public ArrayList<Usuario> getUsuarios() {
+        return usuarios;
+    }
 
     private boolean verificaSeExisteEmail(String email) {
         for (Usuario usuario : this.usuarios) {
@@ -28,21 +31,32 @@ public class Sistema {
     public void cadastrar() {
         System.out.println("---FAZER CADASTRO---");
         System.out.println("Digite o seu email: ");
-        String email = scanner.nextLine();
+        String email = Menu.scanner.nextLine();
 
         System.out.println("Digite a sua senha: ");
-        String senha = scanner.nextLine();
+        String senha = Menu.scanner.nextLine();
 
         System.out.println("Digite o seu nome completo: ");
-        String nome = scanner.nextLine();
+        String nome = Menu.scanner.nextLine();
 
         System.out.println("Digite o seu CPF (XXX.XXX.XXX-XX): ");
-        String cpf = scanner.nextLine();
+        String cpf = Menu.scanner.nextLine();
 
-        System.out.println("Digite a sua data de nascimento (dd/MM/aaaa): ");
-        String data = scanner.nextLine();
-        DateTimeFormatter formatador = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-        LocalDate dataNascimento = LocalDate.parse(data, formatador);
+        LocalDate dataNascimento = null;
+
+        while (dataNascimento == null) {
+            try {
+                System.out.println("Digite a sua data de nascimento (dd/MM/aaaa): ");
+                String data = Menu.scanner.nextLine();
+                DateTimeFormatter formatador = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+                dataNascimento = LocalDate.parse(data, formatador);
+
+            } catch (DateTimeParseException e) {
+                System.out.println("Data invalida! Use o formato dd/MM/aaaa:");
+
+                dataNascimento = null;
+            }
+        }
 
         if (this.verificaSeExisteEmail(email)) {
             System.out.println("Usuario ja cadastrado!");
@@ -51,7 +65,7 @@ public class Sistema {
             return;
         }
         Usuario usuario = new Usuario(email, senha, nome, cpf, dataNascimento);
-        usuarios.add(usuario);
+        this.usuarios.add(usuario);
         System.out.println("Usuario cadastrado com sucesso!");
         System.out.println("");
         Menu.iniciar();
@@ -60,10 +74,10 @@ public class Sistema {
     public void login() {
         System.out.println("---FAZER LOGIN---");
         System.out.println("Digite o seu email: ");
-        String email = scanner.nextLine();
+        String email = Menu.scanner.nextLine();
 
         System.out.println("Digite a sua senha: ");
-        String senha = scanner.nextLine();
+        String senha = Menu.scanner.nextLine();
 
         if (email.trim().equals("admin") && senha.trim().equals("admin")) {
             System.out.println("Usuario logado como administrador!");
@@ -73,8 +87,10 @@ public class Sistema {
         }
 
         if (this.verificaSeExisteEmail(email) && this.verificaSeExisteSenha(senha)) {
+
             System.out.println("Usuario logado com sucesso!");
             System.out.println("");
+            Menu.usuario(email);
             return;
         } else {
             System.out.println("Email e/ou senha incorretos! Tente novamente!");
